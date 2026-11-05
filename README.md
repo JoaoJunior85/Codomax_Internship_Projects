@@ -1,43 +1,36 @@
-# Frontend Blog Application
+ # Full-Stack Blog Application
 
-A responsive blog interface built as part of my frontend development internship program.
+A full-stack blog application built as part of my frontend and backend development internship program.
 
-## Overview
+## 📖 Overview
 
-This project is a multi-page blog application that demonstrates my understanding of HTML5, CSS3 (Flexbox and responsive design), and basic JavaScript DOM manipulation.
+This project demonstrates a complete Full-Stack architecture:
+- A **Frontend** built with HTML5, CSS3, and Vanilla JavaScript.
+- A **Backend** REST API built with Node.js and Express.js.
 
-## Features
+## ✨ Features
 
+- **User Registration & Login:** (Simulated API endpoints)
+- **Create Post:** Users can create new blog posts.
+- **Dashboard:** Displays the logged-in user's name and a list of created posts.
 - **Responsive Design:** Adapts to mobile, tablet, and desktop screens.
-- **Navigation:** A consistent navigation bar across all pages.
-- **5 Pages Included:**
-  - `index.html` – Home page with sample blog posts.
-  - `login.html` – User login form.
-  - `register.html` – User registration form.
-  - `dashboard.html` – User dashboard area.
-  - `create-post.html` – Form to create a new blog post.
-- **JavaScript Simulation:** Form submissions trigger an alert and redirect the user (simulating a backend flow).
+- **REST API:** Backend handles GET and POST requests.
 
-##  Technologies Used
+## 🛠️ Technologies Used
 
-- **HTML5** – Semantic structure.
-- **CSS3** – Flexbox, responsive layout, hover effects.
-- **JavaScript (Vanilla)** – DOM manipulation and form handling.
-- **Git & GitHub** – Version control.
+**Frontend:**
+- HTML5, CSS3 (Flexbox), JavaScript (Fetch API, DOM Manipulation)
 
-##  Project Structure
+**Backend:**
+- Node.js
+- Express.js
+- CORS (Cross-Origin Resource Sharing)
+
+## 📁 Project Structure
 
 projeto-blog/
 │
-├── index.html          # Home page
-├── login.html          # Login page
-├── register.html       # Registration page
-├── dashboard.html      # User dashboard
-├── create-post.html    # Create new post page
-├── README.md
-│
-├── css/
-│   └── style.css       # All styles (responsive design)
-│
-└── js/
-    └── script.js       # Form handling logic
+├── frontend/           # Frontend application (HTML, CSS, JS)
+├── backend/            # Backend REST API (Node.js + Express)
+├── .gitignore
+└── README.md

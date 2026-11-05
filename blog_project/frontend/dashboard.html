@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+     <nav class="navbar">
+        <div class="logo">MyBlog</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="create-post.html" class="btn">Create Post</a></li>
+            <li><a href="#" id="logoutBtn">Logout</a></li> <!-- Adicionámos Logout -->
+        </ul>
+    </nav>
+     <div class="form-container">
+        <h2>Welcome, <span id="userNameDisplay">User</span>!</h2>
+        <p>This is your dashboard. Here you can manage your posts.</p>
+        
+        <!-- Adicionámos uma área para listar os posts -->
+        <h3 style="margin-top: 20px;">Your Posts</h3>
+        <div id="userPostsList" style="margin-top: 10px;">
+            <!-- Os posts vão aparecer aqui via JavaScript -->
+        </div>
+    </div>
+    <script src="js/script.js"></script>
+    <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+        document.getElementById('usernameDisplay').textContent = user.name;
+    }
+</script>
+</body>
+</html>
