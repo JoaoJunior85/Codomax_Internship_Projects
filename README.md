@@ -1,20 +1,23 @@
- # Full-Stack Blog Application
 
-A full-stack blog application built as part of my frontend and backend development internship program.
+
+# Full-Stack Blog Application
+
+A complete Full-Stack blog application built as part of my development internship program.
 
 ## 📖 Overview
 
-This project demonstrates a complete Full-Stack architecture:
-- A **Frontend** built with HTML5, CSS3, and Vanilla JavaScript.
-- A **Backend** REST API built with Node.js and Express.js.
+This project demonstrates a complete Full-Stack architecture with persistent data storage:
+- **Frontend:** HTML5, CSS3, and Vanilla JavaScript.
+- **Backend:** Node.js and Express.js REST API.
+- **Database:** MongoDB (via Mongoose).
 
 ## ✨ Features
 
-- **User Registration & Login:** (Simulated API endpoints)
-- **Create Post:** Users can create new blog posts.
-- **Dashboard:** Displays the logged-in user's name and a list of created posts.
+- **User Authentication:** Registration and Login with encrypted passwords (bcrypt).
+- **Persistent Data:** Users and posts are stored in a MongoDB database.
+- **Create & Read Posts:** Users can create blog posts and view a list of all posts.
+- **Post Details Page:** Click on any post to view its full content.
 - **Responsive Design:** Adapts to mobile, tablet, and desktop screens.
-- **REST API:** Backend handles GET and POST requests.
 
 ## 🛠️ Technologies Used
 
@@ -22,15 +25,21 @@ This project demonstrates a complete Full-Stack architecture:
 - HTML5, CSS3 (Flexbox), JavaScript (Fetch API, DOM Manipulation)
 
 **Backend:**
-- Node.js
-- Express.js
-- CORS (Cross-Origin Resource Sharing)
+- Node.js, Express.js
+- MongoDB & Mongoose
+- bcrypt (Password hashing)
+- dotenv (Environment variables)
+- CORS
 
 ## 📁 Project Structure
 
+```text
 projeto-blog/
 │
 ├── frontend/           # Frontend application (HTML, CSS, JS)
-├── backend/            # Backend REST API (Node.js + Express)
+├── backend/            # Backend REST API (Node.js + Express + MongoDB)
+│   ├── models/         # Mongoose schemas (User, Post)
+│   ├── server.js
+│   └── package.json
 ├── .gitignore
-└── README.md
+└── README.md 
