@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Post - MyBlog</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">MyBlog</div>
+        <ul class="nav-links">
+            <li><a href="dashboard.html">Cancel & Go Back</a></li>
+        </ul>
+    </nav>
+
+    <div class="form-container">
+        <h2>Edit Post</h2>
+        <!-- The ID 'editPostForm' is used by script.js -->
+        <form id="editPostForm">
+            <div class="form-group">
+                <label for="editTitle">Title:</label>
+                <input type="text" id="editTitle" name="title" required placeholder="Update title">
+            </div>
+            <div class="form-group">
+                <label for="editContent">Content:</label>
+                <textarea id="editContent" name="content" rows="6" required placeholder="Update content..."></textarea>
+            </div>
+            <!-- Yellow button to differentiate from Create -->
+            <button type="submit" style="background-color: #ffc107; color: black;">Update Post</button>
+        </form>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
