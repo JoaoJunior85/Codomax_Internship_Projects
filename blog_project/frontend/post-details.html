@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Post Details - MyBlog</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- Lucide Icons Library -->
+<script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -14,12 +15,15 @@
         </ul>
     </nav>
 
-    <div class="form-container" style="max-width: 700px;">
-        <!-- These spans/headers will be populated by script.js -->
-        <h2 id="postTitle">Loading...</h2>
-        <p><small><strong>By:</strong> <span id="postAuthor"></span></small></p>
-        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ccc;">
-        <p id="postContent" style="line-height: 1.6;"></p>
+    <div class="form-container" style="max-width: 800px;">
+        <!-- NEW: Image Tag for the cover -->
+         <!-- Dentro do teu form-container do post-details.html -->
+<img id="postImage" src="" alt="Cover" style="width: 100%; height: auto; max-height: 450px; object-fit: cover; object-position: center top; border-radius: 16px; margin-bottom: 30px;">
+
+<!-- Adiciona um estilo ao título e conteúdo para parecer um artigo -->
+<h2 id="postTitle" style="font-size: 2.5rem; margin-bottom: 10px; line-height: 1.2;">Loading...</h2>
+<p style="margin-bottom: 30px; color: #6b7280;"><small>Written by <span id="postAuthor" style="font-weight: 600; color: #111827;"></span></small></p>
+<p id="postContent" style="line-height: 1.8; font-size: 1.1rem; color: #374151;"></p>
     </div>
 
     <script src="js/script.js"></script>

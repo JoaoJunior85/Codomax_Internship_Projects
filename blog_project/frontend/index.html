@@ -3,42 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Blog - Home</title>
-    <!-- Updated path to CSS folder -->
+    <title>MyBlog - Home</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- Lucide Icons Library -->
+<script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
+    <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">MyBlog</div>
-        <ul class="nav-links">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="login.html">Login</a></li>
-            <li><a href="register.html">Register</a></li>
-            <li><a href="dashboard.html">Dashboard</a></li>
-            <li><a href="create-post.html" class="btn">Create Post</a></li>
-        </ul>
+    <ul class="nav-links">
+    <li><a href="index.html"><i data-lucide="home" style="width: 18px; height: 18px; margin-right: 6px; vertical-align: middle;"></i>Home</a></li>
+    <li><a href="login.html"><i data-lucide="log-in" style="width: 18px; height: 18px; margin-right: 6px; vertical-align: middle;"></i>Login</a></li>
+    <li><a href="register.html"><i data-lucide="user-plus" style="width: 18px; height: 18px; margin-right: 6px; vertical-align: middle;"></i>Register</a></li>
+    <li><a href="dashboard.html"><i data-lucide="layout-dashboard" style="width: 18px; height: 18px; margin-right: 6px; vertical-align: middle;"></i>Dashboard</a></li>
+    <li><a href="create-post.html" class="btn-nav"><i data-lucide="pen-line" style="width: 18px; height: 18px; margin-right: 6px; vertical-align: middle;"></i>Start Writing</a></li>
+</ul>
     </nav>
 
+    <!-- Hero Section -->
     <header class="hero">
-        <h1>Welcome to My Blog</h1>
-        <p>Sharing knowledge and ideas.</p>
+        <h1>Insights, Ideas & <br> <span class="gradient-text">Digital Stories</span></h1>
+        <p>A modern platform to share your thoughts with the world. Built for creators, developers, and thinkers.</p>
+        <a href="#latest-posts" class="btn-nav" style="display: inline-block; margin-top: 30px; padding: 14px 32px; font-size: 1.1rem; text-decoration: none;">
+            Explore Latest Posts ↓
+        </a>
     </header>
 
-    <main class="container">
-        <article class="card">
-            <h2>First Post</h2>
-            <p>This is the content of my first post created during the internship!</p>
-        </article>
-        <article class="card">
-            <h2>Second Post</h2>
-            <p>Learning HTML, CSS, and JavaScript.</p>
-        </article>
+    <!-- Posts Section -->
+    <main id="latest-posts">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 10px;">Latest Articles</h2>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">Discover what the community is writing about.</p>
+        </div>
+        
+        <!-- O JavaScript vai injetar os posts reais aqui dentro -->
+        <div class="container" id="homePostsList">
+            <!-- Loading state -->
+            <p style="text-align: center; width: 100%; color: var(--text-muted);">Loading posts...</p>
+        </div>
     </main>
 
-    <!-- Updated path to JS folder -->
-    <script src="js/script.js">
+    <!-- Footer -->
+    <footer style="text-align: center; padding: 40px; border-top: 1px solid var(--border-light); color: var(--text-muted); margin-top: 60px;">
+        <p>© 2024 MyBlog. Built with Node.js, Express & MongoDB.</p>
+    </footer>
 
-        
-    </script>
+    <script src="js/script.js"></script>
 </body>
 </html>

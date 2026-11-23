@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Post - MyBlog</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- Lucide Icons Library -->
+<script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -23,11 +24,15 @@
                 <input type="text" id="editTitle" name="title" required placeholder="Update title">
             </div>
             <div class="form-group">
+                <label for="editImageUrl">Cover Image URL:</label>
+                <!-- NEW: Input for the image link -->
+                <input type="url" id="editImageUrl" name="imageUrl" placeholder="https://exemplo.com/imagem.jpg">
+            </div>
+            <div class="form-group">
                 <label for="editContent">Content:</label>
                 <textarea id="editContent" name="content" rows="6" required placeholder="Update content..."></textarea>
             </div>
-            <!-- Yellow button to differentiate from Create -->
-            <button type="submit" style="background-color: #ffc107; color: black;">Update Post</button>
+            <button type="submit" style="background-color: #f59e0b; color: black;">Update Post</button>
         </form>
     </div>
 

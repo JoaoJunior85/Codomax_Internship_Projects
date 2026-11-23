@@ -4,85 +4,91 @@
 const dns = require('dns');
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
-
-
-
-
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-// Import Models
 const User = require('./models/User');
 const Post = require('./models/Post');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+const DEFAULT_IMAGE_URL = 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=800&q=80';
 
-// --- Middleware ---
-app.use(cors()); // Allows the frontend to communicate with the backend
-app.use(express.json()); // Parses incoming JSON requests
+const getPostSearchQuery = (search) => {
+    if (typeof search !== 'string' || !search.trim()) return {};
+    const escapedSearch = search.trim().slice(0, 100).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return {
+        $or: [
+            { title: { $regex: escapedSearch, $options: 'i' } },
+            { content: { $regex: escapedSearch, $options: 'i' } }
+        ]
+    };
+};
+
+app.use(cors());
+app.use(express.json());
 
 // --- Database Connection ---
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('✅ Connected to MongoDB!'))
     .catch((err) => console.error('❌ MongoDB connection error:', err));
 
+// --- MIDDLEWARE: Verify JWT Token ---
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; 
+
+    if (!token) return res.status(401).json({ message: 'Access Denied. No token provided.' });
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) return res.status(403).json({ message: 'Invalid or expired token.' });
+        req.user = user; 
+        next();
+    });
+};
+
 // ==========================================
-// USER AUTHENTICATION ROUTES
+// USER ROUTES
 // ==========================================
 
-/**
- * @route   POST /api/register
- * @desc    Register a new user with encrypted password
- */
 app.post('/api/register', async (req, res) => {
     try {
         const { name, email, password } = req.body;
-
-        // 1. Check if user already exists
         const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'User already exists!' });
-        }
+        if (existingUser) return res.status(400).json({ message: 'User already exists!' });
 
-        // 2. Hash the password for security
         const salt = await bcrypt.genSalt(12);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // 3. Create and save the new user
         const newUser = new User({ name, email, password: hashedPassword });
         await newUser.save();
 
-        res.status(201).json({ message: 'User registered successfully!', user: { name, email } });
+        res.status(201).json({ message: 'User registered successfully!' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 });
 
-/**
- * @route   POST /api/login
- * @desc    Authenticate user and compare hashed passwords
- */
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-
-        // 1. Find user by email
         const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(401).json({ message: 'Invalid credentials!' });
-        }
+        if (!user) return res.status(401).json({ message: 'Invalid credentials!' });
 
-        // 2. Compare provided password with the hashed one in database
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(401).json({ message: 'Invalid credentials!' });
-        }
+        if (!isMatch) return res.status(401).json({ message: 'Invalid credentials!' });
 
-        res.status(200).json({ message: 'Login successful!', user: { name: user.name, email: user.email } });
+        const token = jwt.sign(
+            { userId: user._id, name: user.name }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '1h' }
+        );
+
+        res.status(200).json({ message: 'Login successful!', token, user: { name: user.name, email: user.email } });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -92,14 +98,20 @@ app.post('/api/login', async (req, res) => {
 // BLOG POST ROUTES (CRUD)
 // ==========================================
 
-/**
- * @route   POST /api/posts
- * @desc    Create a new blog post
- */
-app.post('/api/posts', async (req, res) => {
+// Create Post (Protected) - Updated to receive imageUrl
+app.post('/api/posts', authenticateToken, async (req, res) => {
     try {
-        const { title, content, author } = req.body;
-        const newPost = new Post({ title, content, author });
+        const { title, content, imageUrl } = req.body;
+        if (typeof title !== 'string' || !title.trim() || typeof content !== 'string' || !content.trim()) {
+            return res.status(400).json({ message: 'Title and content are required.' });
+        }
+        const newPost = new Post({ 
+            title: title.trim(), 
+            content: content.trim(), 
+            imageUrl: typeof imageUrl === 'string' && imageUrl.trim() ? imageUrl.trim() : DEFAULT_IMAGE_URL,
+            author: req.user.name, 
+            userId: req.user.userId 
+        });
         await newPost.save();
         res.status(201).json({ message: 'Post created successfully!', post: newPost });
     } catch (error) {
@@ -107,26 +119,10 @@ app.post('/api/posts', async (req, res) => {
     }
 });
 
-/**
- * @route   GET /api/posts
- * @desc    Retrieve all posts (Supports optional search filter via ?search=)
- */
+// Get ALL posts (Public)
 app.get('/api/posts', async (req, res) => {
     try {
-        const searchQuery = req.query.search;
-        let query = {};
-
-        // If a search term is provided, filter by title or content
-        if (searchQuery) {
-            query = {
-                $or: [
-                    { title: { $regex: searchQuery, $options: 'i' } }, // 'i' for case-insensitive
-                    { content: { $regex: searchQuery, $options: 'i' } }
-                ]
-            };
-        }
-
-        // Fetch posts (empty query fetches all) sorted by newest first
+        const query = getPostSearchQuery(req.query.search);
         const posts = await Post.find(query).sort({ createdAt: -1 });
         res.status(200).json(posts);
     } catch (error) {
@@ -134,66 +130,78 @@ app.get('/api/posts', async (req, res) => {
     }
 });
 
-/**
- * @route   GET /api/posts/:id
- * @desc    Retrieve a single post by its ID
- */
+// Get Logged-in User's Posts ONLY (Protected)
+app.get('/api/my-posts', authenticateToken, async (req, res) => {
+    try {
+        const query = getPostSearchQuery(req.query.search);
+        const posts = await Post.find({ ...query, userId: req.user.userId }).sort({ createdAt: -1 });
+        res.status(200).json(posts);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Get Single Post (Public)
 app.get('/api/posts/:id', async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
-        if (!post) {
-            return res.status(404).json({ message: 'Post not found' });
-        }
+        if (!post) return res.status(404).json({ message: 'Post not found' });
         res.status(200).json(post);
     } catch (error) {
+        if (error.name === 'CastError') return res.status(400).json({ message: 'Invalid post ID.' });
         res.status(500).json({ message: error.message });
     }
 });
 
-/**
- * @route   PUT /api/posts/:id
- * @desc    Update an existing post (Title and Content)
- */
-app.put('/api/posts/:id', async (req, res) => {
+// Update Post (Protected) - Updated to receive imageUrl
+app.put('/api/posts/:id', authenticateToken, async (req, res) => {
     try {
-        const { title, content } = req.body;
+        const { title, content, imageUrl } = req.body; // Extract imageUrl
+        if (typeof title !== 'string' || !title.trim() || typeof content !== 'string' || !content.trim()) {
+            return res.status(400).json({ message: 'Title and content are required.' });
+        }
+        const post = await Post.findById(req.params.id);
         
-        // { new: true } returns the updated document instead of the original one
+        if (!post) return res.status(404).json({ message: 'Post not found' });
+        if (post.userId.toString() !== req.user.userId) {
+            return res.status(403).json({ message: 'Unauthorized to edit this post.' });
+        }
+
+        // Update with new imageUrl
         const updatedPost = await Post.findByIdAndUpdate(
             req.params.id, 
-            { title, content }, 
-            { new: true }
+            {
+                title: title.trim(),
+                content: content.trim(),
+                imageUrl: typeof imageUrl === 'string' && imageUrl.trim() ? imageUrl.trim() : DEFAULT_IMAGE_URL
+            },
+            { new: true, runValidators: true }
         );
-
-        if (!updatedPost) {
-            return res.status(404).json({ message: 'Post not found' });
-        }
-
         res.status(200).json({ message: 'Post updated successfully!', post: updatedPost });
     } catch (error) {
+        if (error.name === 'CastError') return res.status(400).json({ message: 'Invalid post ID.' });
         res.status(500).json({ message: error.message });
     }
 });
 
-/**
- * @route   DELETE /api/posts/:id
- * @desc    Delete a post from the database
- */
-app.delete('/api/posts/:id', async (req, res) => {
+// Delete Post (Protected)
+app.delete('/api/posts/:id', authenticateToken, async (req, res) => {
     try {
-        const deletedPost = await Post.findByIdAndDelete(req.params.id);
-
-        if (!deletedPost) {
-            return res.status(404).json({ message: 'Post not found' });
+        const post = await Post.findById(req.params.id);
+        
+        if (!post) return res.status(404).json({ message: 'Post not found' });
+        if (post.userId.toString() !== req.user.userId) {
+            return res.status(403).json({ message: 'Unauthorized to delete this post.' });
         }
 
+        await Post.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: 'Post deleted successfully!' });
     } catch (error) {
+        if (error.name === 'CastError') return res.status(400).json({ message: 'Invalid post ID.' });
         res.status(500).json({ message: error.message });
     }
 });
 
-// --- Start Server ---
 app.listen(PORT, () => {
     console.log(`🚀 Server is running on http://localhost:${PORT}`);
 });

@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Post - MyBlog</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- Lucide Icons Library -->
+<script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -21,6 +22,11 @@
             <div class="form-group">
                 <label for="title">Title:</label>
                 <input type="text" id="title" name="title" required placeholder="Enter post title">
+            </div>
+            <div class="form-group">
+                <label for="imageUrl">Cover Image URL (Optional):</label>
+                <!-- NEW: Input for the image link -->
+                <input type="url" id="imageUrl" name="imageUrl" placeholder="https://exemplo.com/imagem.jpg">
             </div>
             <div class="form-group">
                 <label for="content">Content:</label>
