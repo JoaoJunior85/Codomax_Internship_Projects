@@ -19,6 +19,7 @@ This project demonstrates a complete Full-Stack architecture with persistent dat
   - **Update:** Edit existing posts (Title and Content).
   - **Delete:** Remove posts with a confirmation prompt.
 - **Search Functionality:** Real-time search to filter posts by title or content.
+- **Post Images:** Use an image URL or select a local PNG, JPG, or WebP image; local images are optimized before saving.
 - **Responsive Design:** Adapts to mobile, tablet, and desktop screens.
 
 ## 🛠️ Technologies Used

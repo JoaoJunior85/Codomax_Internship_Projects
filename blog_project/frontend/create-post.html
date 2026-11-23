@@ -10,7 +10,7 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">MyBlog</div>
+        <a class="brand" href="index.html"><img src="img/logo.png" alt=""><span>MyBlog</span></a>
         <ul class="nav-links">
             <li><a href="dashboard.html">Back to Dashboard</a></li>
         </ul>
@@ -25,9 +25,12 @@
                 <input type="text" id="title" name="title" required placeholder="Enter post title">
             </div>
             <div class="form-group">
-                <label for="imageUrl">Cover Image URL (Optional):</label>
-                <!-- NEW: Input for the image link -->
-                <input type="url" id="imageUrl" name="imageUrl" placeholder="https://exemplo.com/imagem.jpg">
+                <label for="imageUrl">Image URL (optional)</label>
+                <input type="text" id="imageUrl" name="imageUrl" inputmode="url" placeholder="https://example.com/image.jpg">
+                <label for="imageFile" class="file-label">Or choose an image from your device</label>
+                <input type="file" id="imageFile" accept="image/png,image/jpeg,image/webp">
+                <small class="field-help">PNG, JPG or WebP • maximum 8 MB; optimized automatically.</small>
+                <img id="imagePreview" class="image-preview" alt="Selected cover preview" hidden>
             </div>
             <div class="form-group">
                 <label for="content">Content:</label>

@@ -70,6 +70,43 @@ h1, h2, h3, h4 {
     color: var(--text-main);
 }
 
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-main);
+    text-decoration: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.65rem;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+}
+
+.brand img {
+    width: 76px;
+    height: 56px;
+    object-fit: contain;
+    filter: brightness(0) saturate(100%) drop-shadow(0 3px 6px rgba(79, 70, 229, 0.16));
+}
+
+.form-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 24px;
+    color: var(--text-main);
+    font: 700 1.55rem 'Outfit', sans-serif;
+}
+
+.form-brand img {
+    width: 70px;
+    height: 56px;
+    object-fit: contain;
+    filter: brightness(0) saturate(100%);
+}
+
 .nav-links {
     list-style: none;
     display: flex;
@@ -261,6 +298,69 @@ h1, h2, h3, h4 {
     transition: var(--transition);
 }
 
+.form-group input[type="file"] {
+    padding: 12px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.file-label {
+    margin-top: 16px;
+}
+
+.field-help {
+    display: block;
+    margin-top: 6px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.image-preview {
+    display: block;
+    width: 100%;
+    max-height: 240px;
+    margin-top: 14px;
+    object-fit: contain;
+    border: 1px solid #e4e4e7;
+    border-radius: 14px;
+    background: #f4f4f5;
+}
+
+.image-preview[hidden] {
+    display: none;
+}
+
+.toast-region {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: grid;
+    gap: 10px;
+    width: min(390px, calc(100vw - 32px));
+}
+
+.toast {
+    padding: 15px 18px;
+    border: 1px solid #e4e4e7;
+    border-left: 4px solid var(--accent);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 14px 40px rgba(24, 24, 27, 0.14);
+    color: var(--text-main);
+    font-size: 0.95rem;
+    animation: toast-in 180ms ease-out;
+}
+
+.toast-success { border-left-color: #16a34a; }
+.toast-error { border-left-color: #dc2626; }
+.toast-info { border-left-color: var(--accent); }
+
+@keyframes toast-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 /* Efeito de foco que parece mágico */
 .form-group input:focus, .form-group textarea:focus {
     outline: none;
@@ -306,6 +406,8 @@ button[type="submit"]:active {
 
 @media (max-width: 480px) {
     .navbar { gap: 12px; }
+    .brand { font-size: 1.45rem; }
+    .brand img { width: 64px; height: 48px; }
     .nav-links { gap: 10px 16px; }
     .nav-links a { font-size: 0.9rem; }
     .hero { padding: 56px 16px 32px; }
@@ -319,6 +421,7 @@ button[type="submit"]:active {
     #postTitle { font-size: clamp(1.8rem, 8vw, 2.5rem) !important; }
     .section-heading h2 { font-size: 2rem; }
     .section-heading p { font-size: 1rem; padding: 0 16px; }
+    .toast-region { top: 12px; right: 16px; }
 }
 
 
@@ -369,6 +472,11 @@ html {
 
 .load-error {
     color: #ef4444;
+    max-width: 620px;
+    margin: 0 auto;
+    border: 1px solid #fecaca;
+    border-radius: 16px;
+    background: #fff1f2;
 }
 
 

@@ -17,6 +17,22 @@ const Post = require('./models/Post');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DEFAULT_IMAGE_URL = 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=800&q=80';
+const normalizeImageUrl = (value) => {
+    if (typeof value !== 'string' || !value.trim()) return DEFAULT_IMAGE_URL;
+    const imageUrl = value.trim();
+    if (imageUrl.length > 4_200_000) throw new Error('Image is too large. Choose a smaller image.');
+    if (/^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(imageUrl)) return imageUrl;
+    let parsedUrl;
+    try {
+        parsedUrl = new URL(imageUrl);
+    } catch {
+        throw new Error('Image must be a valid HTTP or HTTPS URL.');
+    }
+    if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+        throw new Error('Image must be a valid HTTP or HTTPS URL.');
+    }
+    return imageUrl;
+};
 
 const getPostSearchQuery = (search) => {
     if (typeof search !== 'string' || !search.trim()) return {};
@@ -51,7 +67,7 @@ app.use(cors(corsOptions));
 
 
 
-app.use(express.json());
+app.use(express.json({ limit: '6mb' }));
 
 // --- Database Connection ---
 mongoose.connect(process.env.MONGO_URI)
@@ -129,7 +145,7 @@ app.post('/api/posts', authenticateToken, async (req, res) => {
         const newPost = new Post({ 
             title: title.trim(), 
             content: content.trim(), 
-            imageUrl: typeof imageUrl === 'string' && imageUrl.trim() ? imageUrl.trim() : DEFAULT_IMAGE_URL,
+            imageUrl: normalizeImageUrl(imageUrl),
             author: req.user.name, 
             userId: req.user.userId 
         });
@@ -194,12 +210,13 @@ app.put('/api/posts/:id', authenticateToken, async (req, res) => {
             {
                 title: title.trim(),
                 content: content.trim(),
-                imageUrl: typeof imageUrl === 'string' && imageUrl.trim() ? imageUrl.trim() : DEFAULT_IMAGE_URL
+                imageUrl: normalizeImageUrl(imageUrl)
             },
             { new: true, runValidators: true }
         );
         res.status(200).json({ message: 'Post updated successfully!', post: updatedPost });
     } catch (error) {
+        if (error.message.startsWith('Image ')) return res.status(400).json({ message: error.message });
         if (error.name === 'CastError') return res.status(400).json({ message: 'Invalid post ID.' });
         res.status(500).json({ message: error.message });
     }
@@ -221,6 +238,16 @@ app.delete('/api/posts/:id', authenticateToken, async (req, res) => {
         if (error.name === 'CastError') return res.status(400).json({ message: 'Invalid post ID.' });
         res.status(500).json({ message: error.message });
     }
+});
+
+app.use((error, req, res, next) => {
+    if (error.type === 'entity.too.large') {
+        return res.status(413).json({ message: 'Image is too large. Choose a smaller image.' });
+    }
+    if (error.type === 'entity.parse.failed') {
+        return res.status(400).json({ message: 'Invalid request data.' });
+    }
+    next(error);
 });
 
 app.listen(PORT, () => {
