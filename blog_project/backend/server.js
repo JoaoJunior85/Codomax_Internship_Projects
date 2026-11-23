@@ -29,10 +29,22 @@ const getPostSearchQuery = (search) => {
     };
 };
 
-//  cors configuration to allow requests from the frontend
+const configuredFrontendOrigins = (process.env.FRONTEND_URL || '')
+    .split(',')
+    .map((origin) => origin.trim().replace(/\/$/, ''))
+    .filter(Boolean);
+
+// Allow configured frontend domains, Vercel deployments, and local development.
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:5500',
-  optionsSuccessStatus: 200
+    origin: (origin, callback) => {
+        const isLocalOrigin = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin || '');
+        const isVercelOrigin = /^https:\/\/[a-z0-9.-]+\.vercel\.app$/i.test(origin || '');
+        if (!origin || configuredFrontendOrigins.includes(origin) || isLocalOrigin || isVercelOrigin) {
+            return callback(null, true);
+        }
+        return callback(new Error(`Origin ${origin} is not allowed by CORS`));
+    },
+    optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
 

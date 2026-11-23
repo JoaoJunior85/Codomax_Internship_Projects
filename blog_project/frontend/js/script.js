@@ -1,6 +1,10 @@
 const API_URL = "https://blog-backend-1c6q.onrender.com/api";
-// Inicializar os ícones Lucide
-lucide.createIcons();
+const renderIcons = () => {
+  if (window.lucide && typeof window.lucide.createIcons === "function") {
+    window.lucide.createIcons();
+  }
+};
+renderIcons();
 
 // Helper function to get the token from LocalStorage
 const getToken = () => localStorage.getItem("token");
@@ -144,7 +148,7 @@ async function loadMyPosts(searchTerm = "") {
             `;
       userPostsList.appendChild(postElement);
       // Inicializar os ícones Lucide
-      lucide.createIcons();
+      renderIcons();
     });
   } catch (error) {
     if (error.name === "AbortError") return;
@@ -339,7 +343,13 @@ if (homePostsList) {
     try {
       // Vai buscar todos os posts à API (Rota Pública)
       const response = await fetch(`${API_URL}/posts`);
+      if (!response.ok) {
+        throw new Error(`Posts API returned HTTP ${response.status}`);
+      }
       const posts = await response.json();
+      if (!Array.isArray(posts)) {
+        throw new Error("Posts API returned an invalid response");
+      }
 
       homePostsList.innerHTML = ""; // Limpa o "Loading..."
 
@@ -379,12 +389,12 @@ if (homePostsList) {
                 `;
         homePostsList.appendChild(postElement);
         // Inicializar os ícones Lucide
-        lucide.createIcons();
+        renderIcons();
       });
     } catch (error) {
       console.error("Error loading home posts:", error);
       homePostsList.innerHTML =
-        '<p style="text-align: center; grid-column: 1 / -1; color: #ef4444;">Failed to load posts.</p>';
+        '<p class="load-error">Posts are temporarily unavailable. Please try again later.</p>';
     }
   }
 

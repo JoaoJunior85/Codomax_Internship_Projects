@@ -33,6 +33,12 @@ This project demonstrates a complete Full-Stack architecture with persistent dat
 - dotenv (Environment variables)
 - CORS
 
+## Production deployment
+
+- On Render, set `MONGO_URI` and `JWT_SECRET`; set `FRONTEND_URL` to the exact Vercel/custom frontend origin. Multiple allowed origins can be comma-separated.
+- The API accepts `*.vercel.app` and local development origins by default. Custom domains must be included in `FRONTEND_URL`.
+- Keep the API base URL in `blog_project/frontend/js/script.js` aligned with the Render service URL.
+
 ## 📁 Project Structure
 
 ```text
