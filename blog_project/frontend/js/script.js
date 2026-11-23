@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/api";
+const API_URL = "https://blog-backend-1c6q.onrender.com/api";
 // Inicializar os ícones Lucide
 lucide.createIcons();
 

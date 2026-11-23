@@ -29,7 +29,16 @@ const getPostSearchQuery = (search) => {
     };
 };
 
-app.use(cors());
+//  cors configuration to allow requests from the frontend
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || 'http://localhost:5500',
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
+
+
+
+
 app.use(express.json());
 
 // --- Database Connection ---
