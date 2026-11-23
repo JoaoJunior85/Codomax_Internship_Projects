@@ -29,11 +29,11 @@ function compressImageFile(file) {
   return new Promise((resolve, reject) => {
     const supportedTypes = ["image/jpeg", "image/png", "image/webp"];
     if (!supportedTypes.includes(file.type)) {
-      reject(new Error("Escolha uma imagem PNG, JPG ou WebP."));
+      reject(new Error("Choose a PNG, JPG, or WebP image."));
       return;
     }
     if (file.size > 8 * 1024 * 1024) {
-      reject(new Error("A imagem original deve ter menos de 8 MB."));
+      reject(new Error("The original image must be smaller than 8 MB."));
       return;
     }
 
@@ -42,7 +42,7 @@ function compressImageFile(file) {
     image.onload = () => {
       URL.revokeObjectURL(objectUrl);
       if (image.naturalWidth * image.naturalHeight > 40000000) {
-        reject(new Error("A resolução da imagem é demasiado grande."));
+        reject(new Error("The image resolution is too large."));
         return;
       }
 
@@ -52,27 +52,27 @@ function compressImageFile(file) {
       canvas.height = Math.round(image.naturalHeight * scale);
       const context = canvas.getContext("2d");
       if (!context) {
-        reject(new Error("Não foi possível preparar a imagem."));
+        reject(new Error("The image could not be prepared."));
         return;
       }
       context.drawImage(image, 0, 0, canvas.width, canvas.height);
       canvas.toBlob((blob) => {
         if (!blob || blob.size > 3 * 1024 * 1024) {
-          reject(new Error("Não foi possível comprimir a imagem. Escolha um ficheiro mais pequeno."));
+          reject(new Error("The image could not be compressed. Choose a smaller file."));
           return;
         }
         const reader = new FileReader();
         reader.onload = () => {
           if (typeof reader.result === "string") resolve(reader.result);
-          else reject(new Error("Não foi possível converter a imagem selecionada."));
+          else reject(new Error("The selected image could not be converted."));
         };
-        reader.onerror = () => reject(new Error("Não foi possível ler a imagem selecionada."));
+        reader.onerror = () => reject(new Error("The selected image could not be read."));
         reader.readAsDataURL(blob);
       }, "image/webp", 0.82);
     };
     image.onerror = () => {
       URL.revokeObjectURL(objectUrl);
-      reject(new Error("Não foi possível abrir esta imagem."));
+      reject(new Error("This image could not be opened."));
     };
     image.src = objectUrl;
   });
@@ -101,7 +101,7 @@ function setupImagePicker(fileInputId, urlInputId, previewId) {
         state.dataUrl = dataUrl;
         urlInput.value = "";
         setPreview(dataUrl);
-        showToast("Imagem pronta para publicação!", "success");
+        showToast("Your image is ready to publish!", "success");
         return dataUrl;
       })
       .catch((error) => {
@@ -134,15 +134,15 @@ function setupImagePicker(fileInputId, urlInputId, previewId) {
 
 function friendlyMessage(message, fallback) {
   const translations = {
-    "User already exists!": "Este email já tem uma conta. Inicia sessão ou usa outro email.",
-    "Invalid credentials!": "Email ou palavra-passe incorretos. Verifica os dados e tenta novamente.",
-    "Title and content are required.": "Preenche o título e o conteúdo antes de publicar.",
-    "Image is too large. Choose a smaller image.": "A imagem é demasiado grande. Escolhe uma imagem menor.",
-    "Image must be a valid HTTP or HTTPS URL.": "Usa um link de imagem válido ou escolhe uma imagem do teu dispositivo.",
-    "Unauthorized to edit this post.": "Só o autor deste post pode alterá-lo.",
-    "Unauthorized to delete this post.": "Só o autor deste post pode removê-lo.",
-    "Post not found": "Este post já não existe ou foi removido.",
-    "Invalid post ID.": "O link deste post é inválido.",
+    "User already exists!": "This email already has an account. Sign in or use another email.",
+    "Invalid credentials!": "Email or password is incorrect. Check your details and try again.",
+    "Title and content are required.": "Add a title and content before publishing.",
+    "Image is too large. Choose a smaller image.": "This image is too large. Choose a smaller one.",
+    "Image must be a valid HTTP or HTTPS URL.": "Use a valid image URL or choose an image from your device.",
+    "Unauthorized to edit this post.": "Only the author can edit this post.",
+    "Unauthorized to delete this post.": "Only the author can delete this post.",
+    "Post not found": "This post is no longer available.",
+    "Invalid post ID.": "This post link is invalid.",
   };
   return translations[message] || message || fallback;
 }
@@ -179,14 +179,14 @@ if (registerForm) {
       });
       const data = await response.json();
       if (response.ok) {
-        showToast("Conta criada com sucesso! Já podes iniciar sessão.", "success");
+        showToast("Your account is ready! You can sign in now.", "success");
         window.setTimeout(() => window.location.assign("login.html"), 1000);
       } else {
-        showToast(friendlyMessage(data.message, "Não foi possível criar a conta."), "error");
+        showToast(friendlyMessage(data.message, "We couldn't create your account. Please try again."), "error");
       }
     } catch (error) {
       console.error("Registration failed:", error);
-      showToast("Não conseguimos contactar o servidor. Verifica a ligação e tenta novamente.", "error");
+      showToast("We couldn't reach the server. Check your connection and try again.", "error");
     }
   });
 }
@@ -208,14 +208,14 @@ if (loginForm) {
       if (response.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        showToast("Bem-vindo de volta!", "success");
+        showToast("Welcome back!", "success");
         window.setTimeout(() => window.location.assign("dashboard.html"), 700);
       } else {
-        showToast(friendlyMessage(data.message, "Não foi possível iniciar sessão."), "error");
+        showToast(friendlyMessage(data.message, "We couldn't sign you in. Please try again."), "error");
       }
     } catch (error) {
       console.error("Login failed:", error);
-      showToast("Não conseguimos contactar o servidor. Verifica a ligação e tenta novamente.", "error");
+      showToast("We couldn't reach the server. Check your connection and try again.", "error");
     }
   });
 }
@@ -306,9 +306,9 @@ async function loadMyPosts(searchTerm = "") {
   } catch (error) {
     if (error.name === "AbortError") return;
     console.error("Error:", error);
-    showToast("Não foi possível carregar os teus posts. Tenta novamente.", "error");
+    showToast("We couldn't load your posts. Please try again.", "error");
     userPostsList.innerHTML =
-      '<p class="load-error">Não foi possível carregar os teus posts. Atualiza a página e tenta novamente.</p>';
+      "<p class=\"load-error\">We couldn't load your posts. Refresh the page and try again.</p>";
   }
 }
 if (userPostsList) loadMyPosts();
@@ -331,15 +331,15 @@ async function deletePost(postId) {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (response.ok) {
-      showToast("Post removido com sucesso.", "success");
+      showToast("Your post has been deleted.", "success");
       loadMyPosts(searchInput ? searchInput.value : "");
     } else {
       const data = await response.json();
-      showToast(friendlyMessage(data.message, "Não foi possível remover o post."), "error");
+      showToast(friendlyMessage(data.message, "We couldn't delete this post. Please try again."), "error");
     }
   } catch (error) {
     console.error("Error deleting post:", error);
-    showToast("Não conseguimos contactar o servidor. Tenta novamente.", "error");
+    showToast("We couldn't reach the server. Please try again.", "error");
   }
 }
 
@@ -373,14 +373,14 @@ if (postForm) {
 
       const data = await response.json();
       if (response.ok) {
-        showToast("O teu post foi publicado com sucesso!", "success");
+        showToast("Your post is live!", "success");
         window.setTimeout(() => window.location.assign("dashboard.html"), 900);
       } else {
-        showToast(friendlyMessage(data.message, "Não foi possível publicar o post."), "error");
+        showToast(friendlyMessage(data.message, "We couldn't publish your post. Please try again."), "error");
       }
     } catch (error) {
       console.error("Error creating post:", error);
-      showToast("Não conseguimos publicar agora. Verifica a ligação e tenta novamente.", "error");
+      showToast("We couldn't publish your post. Check your connection and try again.", "error");
     }
   });
 }
@@ -401,7 +401,7 @@ if (editPostForm) {
       const response = await fetch(`${API_URL}/posts/${postId}`);
       const post = await response.json();
       if (!response.ok) {
-        showToast(friendlyMessage(post.message, "Não foi possível abrir este post."), "error");
+        showToast(friendlyMessage(post.message, "We couldn't open this post."), "error");
         window.setTimeout(() => window.location.assign("dashboard.html"), 1200);
         return;
       }
@@ -410,12 +410,12 @@ if (editPostForm) {
       imagePicker.setValue(post.imageUrl || "");
     } catch (error) {
       console.error("Error loading post:", error);
-      showToast("Não conseguimos carregar este post. Verifica a ligação e tenta novamente.", "error");
+      showToast("We couldn't load this post. Check your connection and try again.", "error");
     }
   }
   if (postId) fetchPostData();
   else {
-    showToast("Não foi possível identificar o post.", "error");
+    showToast("We couldn't identify this post.", "error");
     window.setTimeout(() => window.location.assign("dashboard.html"), 1200);
   }
 
@@ -439,14 +439,14 @@ if (editPostForm) {
 
       const data = await response.json();
       if (response.ok) {
-        showToast("As alterações foram guardadas!", "success");
+        showToast("Your changes have been saved!", "success");
         window.setTimeout(() => window.location.assign("dashboard.html"), 900);
       } else {
-        showToast(friendlyMessage(data.message, "Não foi possível guardar as alterações."), "error");
+        showToast(friendlyMessage(data.message, "We couldn't save your changes. Please try again."), "error");
       }
     } catch (error) {
       console.error("Error updating post:", error);
-      showToast("Não conseguimos guardar agora. Verifica a ligação e tenta novamente.", "error");
+      showToast("We couldn't save your changes. Check your connection and try again.", "error");
     }
   });
 }
@@ -462,7 +462,7 @@ if (postTitle) {
     fetch(`${API_URL}/posts/${postId}`)
       .then(async (res) => {
         const post = await res.json();
-        if (!res.ok) throw new Error(post.message || "Não foi possível carregar o post.");
+        if (!res.ok) throw new Error(post.message || "We couldn't load this post.");
         return post;
       })
       .then((post) => {
@@ -472,12 +472,12 @@ if (postTitle) {
           document.getElementById("postAuthor").textContent = post.author;
           document.getElementById("postContent").textContent = post.content;
         } else {
-          showToast("Este post já não está disponível.", "error");
+          showToast("This post is no longer available.", "error");
         }
       })
       .catch((err) => {
         console.error("Error loading post:", err);
-        showToast(friendlyMessage(err.message, "Não foi possível carregar este post."), "error");
+        showToast(friendlyMessage(err.message, "We couldn't load this post."), "error");
       });
   }
 }

@@ -73,7 +73,7 @@ h1, h2, h3, h4 {
 .brand {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 4px;
     color: var(--text-main);
     text-decoration: none;
     font-family: 'Outfit', sans-serif;
@@ -84,8 +84,8 @@ h1, h2, h3, h4 {
 }
 
 .brand img {
-    width: 76px;
-    height: 56px;
+    width: 54px;
+    height: 54px;
     object-fit: contain;
     filter: brightness(0) saturate(100%) drop-shadow(0 3px 6px rgba(79, 70, 229, 0.16));
 }
@@ -94,15 +94,15 @@ h1, h2, h3, h4 {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 4px;
     margin-bottom: 24px;
     color: var(--text-main);
     font: 700 1.55rem 'Outfit', sans-serif;
 }
 
 .form-brand img {
-    width: 70px;
-    height: 56px;
+    width: 60px;
+    height: 60px;
     object-fit: contain;
     filter: brightness(0) saturate(100%);
 }
@@ -407,7 +407,7 @@ button[type="submit"]:active {
 @media (max-width: 480px) {
     .navbar { gap: 12px; }
     .brand { font-size: 1.45rem; }
-    .brand img { width: 64px; height: 48px; }
+    .brand img { width: 46px; height: 46px; }
     .nav-links { gap: 10px 16px; }
     .nav-links a { font-size: 0.9rem; }
     .hero { padding: 56px 16px 32px; }
